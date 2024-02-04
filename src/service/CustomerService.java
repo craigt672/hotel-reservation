@@ -2,11 +2,12 @@ package service;
 
 import model.Customer;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class CustomerService {
     private static final CustomerService reference = new CustomerService();
-    private final HashMap<String, Customer> customers = new HasMap<String, Customer>();
+    private final HashMap<String, Customer> customers = new HashMap<String, Customer>();
     public void addCustomer(String firstName, String lastName, String email) {
         Customer customer = new Customer(firstName, lastName, email);
         customers.put(email, customer);

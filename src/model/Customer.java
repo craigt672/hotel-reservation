@@ -35,6 +35,18 @@ public class Customer {
         return Objects.equals(email, customer.email);
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(email);
