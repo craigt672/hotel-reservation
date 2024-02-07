@@ -32,7 +32,7 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(email, customer.email);
+        return Objects.equals(firstName, customer.email);
     }
 
     public String getFirstName() {

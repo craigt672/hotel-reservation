@@ -1,25 +1,23 @@
 package api;
 
-import model.Customer;
-import model.IRoom;
+import model.*;
 import service.CustomerService;
 import service.ReservationService;
 
 import java.util.Collection;
-import java.util.List;
 
 public class AdminResource {
     public static AdminResource reference = new AdminResource();
 
-    public Customer getCustomer(String email) {
-        return new CustomerService().getReference().getCustomer(email);
+    public void addRoom(String roomNumber, Double price, RoomType roomType) {
+        new ReservationService().getReference().addRoom(roomNumber, price, roomType);
     }
 
-    public void addRoom(IRoom room) {
-        new ReservationService().getReference().addRoom(room);
+    public IRoom getARoom(String roomNumber) {
+        return new ReservationService().getReference().getARoom(roomNumber);
     }
 
-    public Collection<IRoom> getAllRooms() {
+    public Collection<Room> getAllRooms() {
         return new ReservationService().getReference().getAllRooms();
     }
 

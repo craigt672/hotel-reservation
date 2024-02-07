@@ -1,18 +1,17 @@
 package service;
 
-import model.Customer;
-import model.FreeRoom;
-import model.IRoom;
-import model.Reservation;
+import model.*;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ReservationService {
     private static final ReservationService reference = new ReservationService();
-    private final HashMap<String, IRoom> rooms = new HashMap<String, IRoom>();
+    private final HashMap<String, Room> rooms = new HashMap<String, Room>();
     private final HashMap<Integer, Reservation> reservations = new HashMap<Integer, Reservation>();
 
-    public void addRoom(IRoom room) {
+    public void addRoom(String roomNumber, Double price, RoomType roomType) {
+        Room room = new Room(roomNumber, price, roomType);
         rooms.put(room.getRoomNumber(), room);
     }
 
@@ -20,23 +19,23 @@ public class ReservationService {
         return rooms.get(roomId);
     }
 
-    public Reservation reserveARoom(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
+    public Reservation reserveARoom(Customer customer, Room room, Date checkInDate, Date checkOutDate) {
         Reservation newReservation = new Reservation(customer, room, checkInDate, checkOutDate);
-        return reservations.put(newReservation.hashCode(), newReservation);
+        newReservation.getRoom().bookRoom();
+        reservations.put(newReservation.hashCode(), newReservation);
+        return newReservation;
     }
 
-    public Collection<IRoom> getAllRooms() {
+    public Collection<Room> getAllRooms() {
         return rooms.values();
     }
 
-    public Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate) {
-        Collection<IRoom> foundRooms = new ArrayList<IRoom>();
+    public Collection<Room> findRooms(Date checkInDate, Date checkOutDate) {
+        Collection<Room> foundRooms = new ArrayList<Room>();
 
-        for (Reservation reservation : reservations.values()) {
-            if((checkInDate.equals(reservation.getCheckInDate()) || checkInDate.after(reservation.getCheckInDate()) &&
-                    (checkOutDate.equals(reservation.getCheckOutDate()) || checkOutDate.before(reservation.getCheckOutDate()))
-                    )) {
-                foundRooms.add(reservation.getRoom());
+        for (Room room : getAllRooms()) {
+            if(room.isFree()){
+                foundRooms.add(room);
             }
         }
         return foundRooms;
@@ -54,8 +53,22 @@ public class ReservationService {
     }
 
     public void printAllReservation() {
+        String pattern = "E MMM dd yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+        if(reservations.values().isEmpty()) {
+            System.out.println("There's no reservations");
+            return;
+        }
+
         for (Reservation reservation : reservations.values()) {
-            System.out.println(reservation);
+            System.out.println("|Reservations: ");
+            System.out.println("|-------------------------");
+            System.out.println("|Customer: " + reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
+            System.out.println("|Room: " + reservation.getRoom().getRoomNumber() + " - " + reservation.getRoom().getRoomType());
+            System.out.println("|Price: " + "$" + reservation.getRoom().getRoomPrice() + " " + "price per night");
+            System.out.println("|Checkin Date: " + simpleDateFormat.format(reservation.getCheckInDate()));
+            System.out.println("|Checkout Date: " + simpleDateFormat.format(reservation.getCheckOutDate()));
         }
     }
 
