@@ -2,6 +2,7 @@ import api.HotelResource;
 import model.Customer;
 import model.IRoom;
 import model.Reservation;
+import model.Room;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -29,7 +30,7 @@ public class MainMenu {
                         createAccount();
                         break;
                     case "4":
-                        System.out.println("Option not implemented yet, Coming Soon!");
+                        AdminMenu.run();
                         break;
                     case "5":
                         System.out.println("Good Bye!");
@@ -52,7 +53,7 @@ public class MainMenu {
         Date checkInDate = new Date(checkInDateString);
         Date checkOutDate = new Date(checkOutDateString);
 
-        Collection<IRoom> availableRooms = hotelResource.findARoom(checkInDate, checkOutDate);
+        Collection<Room> availableRooms = hotelResource.findARoom(checkInDate, checkOutDate);
         if(availableRooms.isEmpty()) {
             throw new Exception("There's no available rooms");
         }
@@ -77,12 +78,12 @@ public class MainMenu {
         }
 
         boolean hasRoomNumber = false;
-        IRoom selectedRoom = null;
+        Room selectedRoom = null;
         while (!hasRoomNumber) {
             String roomNumber = getUserInputFromPrompt("What room number would you like to reserve?", MainMenu::validateRoomNumber);
 
-            for(IRoom room: availableRooms) {
-                if(room.getRoomNumber() == roomNumber) {
+            for(Room room: availableRooms) {
+                if(Objects.equals(room.getRoomNumber(), roomNumber)) {
                     hasRoomNumber = true;
                     selectedRoom = room;
                 }
@@ -156,6 +157,7 @@ public class MainMenu {
     }
 
     public static void displayMenuOptions() {
+        System.out.println();
         System.out.println("Main Menu");
         System.out.println("----------------------------------------------------");
         System.out.println("1. Find and Reserve a room");
@@ -167,29 +169,20 @@ public class MainMenu {
         System.out.println("Please select a number for the menu option");
     }
 
-    public static void displayAvailableRooms(Collection<IRoom> availableRooms) {
+    public static void displayAvailableRooms(Collection<Room> availableRooms) {
         System.out.println();
-        System.out.println();
-        System.out.println("Available Rooms:");
+        System.out.println("|Available Rooms:");
         for(IRoom room: availableRooms) {
-            System.out.println(room.toString());
+            System.out.println("|Room number: " + room.getRoomNumber());
         }
-        System.out.println(" ");
-        System.out.println("----------------------------------------------------");
-        System.out.println("Would you like to book a room? y/n");
-        System.out.println();
-        System.out.println();
     }
 
     public static void displayCustomerDetails(Customer customer) {
         System.out.println();
-        System.out.println();
-        System.out.println("Customer:");
-        System.out.println("-------------------------");
-        System.out.println("Name: " + customer.getFirstName() + " " + customer.getLastName());
-        System.out.println("Email: " + customer.getEmail());
-        System.out.println();
-        System.out.println();
+        System.out.println("|Customer:");
+        System.out.println("|-------------------------");
+        System.out.println("|Name: " + customer.getFirstName() + " " + customer.getLastName());
+        System.out.println("|Email: " + customer.getEmail());
     }
 
     public static void displayReservationDetails(Reservation reservation) {
@@ -197,16 +190,13 @@ public class MainMenu {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
         System.out.println();
-        System.out.println();
-        System.out.println("Reservation:");
-        System.out.println("----------------------------------------------------");
-        System.out.println("Customer: " + reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
-        System.out.println("Room: " + reservation.getRoom().getRoomNumber() + " - " + reservation.getRoom().getRoomType());
-        System.out.println("Price: " + "$" + reservation.getRoom().getRoomPrice() + " " + "price per night");
-        System.out.println("Checkin Date: " + simpleDateFormat.format(reservation.getCheckInDate()));
-        System.out.println("Checkout Date: " + simpleDateFormat.format(reservation.getCheckOutDate()));
-        System.out.println();
-        System.out.println();
+        System.out.println("|Reservation:");
+        System.out.println("---------------------------------");
+        System.out.println("|Customer: " + reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
+        System.out.println("|Room: " + reservation.getRoom().getRoomNumber() + " - " + reservation.getRoom().getRoomType());
+        System.out.println("|Price: " + "$" + reservation.getRoom().getRoomPrice() + " " + "price per night");
+        System.out.println("|Checkin Date: " + simpleDateFormat.format(reservation.getCheckInDate()));
+        System.out.println("|Checkout Date: " + simpleDateFormat.format(reservation.getCheckOutDate()));
     }
 
     public static String validateEmail(String email) {
@@ -239,9 +229,8 @@ public class MainMenu {
         return dateString;
     }
 
-
     public static String validateRoomNumber(String roomNumberString) {
-        String roomNumberRegex = "^[1-9]{3}$";
+        String roomNumberRegex = "\\d{3}$";
         Pattern pattern = Pattern.compile(roomNumberRegex);
 
         if(!pattern.matcher(roomNumberString).matches()){
