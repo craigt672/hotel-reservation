@@ -5,11 +5,11 @@ import java.util.Objects;
 
 public class Reservation {
     private final Customer customer;
-    private final IRoom room;
+    private final Room room;
     private final Date checkInDate;
     private final Date checkOutDate;
 
-    public Reservation(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
+    public Reservation(Customer customer, Room room, Date checkInDate, Date checkOutDate) {
         super();
         this.customer = customer;
         this.room = room;
@@ -29,7 +29,7 @@ public class Reservation {
         return checkOutDate;
     }
 
-    public IRoom getRoom() {
+    public Room getRoom() {
         return room;
     }
 
